@@ -17,7 +17,7 @@ export default function Home() {
   useEffect(() => {
     setInterval(() => {
       fetchMarketCapData().then((response) => setCryptoData(response));
-    }, 3000);
+    }, 10000);
   }, []);
 
   return (
