@@ -6,18 +6,21 @@ import Topbar from "../components/Topbar";
 import Modal from "../components/Modal";
 import { useState, useEffect } from "react";
 import { fetchMarketCapData } from "../lib/fetchData";
+import { NextPageContext } from "next";
+import type {
+  MarketcapDataResponse as MCData,
+  MCDataProps,
+} from "../types/stats";
 
-export default function Home() {
-  const [cryptoData, setCryptoData] = useState({
-    index: 0,
-    marketcap: 0,
-    btcDominance: 0,
-  });
+const FETCH_INTERVAL_IN_MINUTES = 5;
+const FETCH_INTERVAL_IN_SECONDS = FETCH_INTERVAL_IN_MINUTES * 60;
+function Home({ data }: MCDataProps) {
+  const [cryptoData, setCryptoData] = useState(data);
 
   useEffect(() => {
     setInterval(() => {
       fetchMarketCapData().then((response) => setCryptoData(response));
-    }, 10000);
+    }, 1000 * FETCH_INTERVAL_IN_SECONDS);
   }, []);
 
   return (
@@ -72,22 +75,18 @@ export default function Home() {
   );
 }
 
-// export const getServerSideProps: GetServerSideProps = async (context) => {
-//   const API_BASE_URL = process.env.API_BASE_URL;
-//   const API_VERSION = process.env.API_VERSION;
-//   const API_CRYPTO_INDEX_URL = process.env.API_CRYPTO_INDEX_URL;
-//   const API_URL: string = `${API_BASE_URL}/${API_VERSION}/${API_CRYPTO_INDEX_URL}`;
-//   console.log(API_URL);
-//   const response: Response = await fetch(API_URL);
-//   let dataToReturn = { index: 0, marketcap: 0, btcDominance: 0 };
+Home.getInitialProps = async (ctx: NextPageContext) => {
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+  const API_VERSION = process.env.NEXT_PUBLIC_API_VERSION;
+  const API_CRYPTO_INDEX_URL = process.env.NEXT_PUBLIC_API_CRYPTO_INDEX_URL;
+  const API_URL: string = `${API_BASE_URL}/${API_VERSION}/${API_CRYPTO_INDEX_URL}`;
+  const response: Response = await fetch(API_URL);
+  let dataToReturn = { index: 0, marketcap: 0, btcDominance: 0 };
+  if (response.ok) {
+    const data: MCData = await response.json();
+    dataToReturn = data;
+  }
+  return { data: dataToReturn };
+};
 
-//   if (response.ok) {
-//     const data = await response.json();
-//     dataToReturn = data;
-//   }
-//   return {
-//     props: {
-//       data: dataToReturn,
-//     },
-//   };
-// };
+export default Home;

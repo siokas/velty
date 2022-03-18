@@ -11,3 +11,7 @@ export type MarketcapDataResponse = {
   marketcap: number;
   btcDominance: number;
 };
+
+export type MCDataProps = {
+  data: MarketcapDataResponse;
+};
