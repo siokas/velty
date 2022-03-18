@@ -7,12 +7,13 @@ import {
 let savedTheme = "light";
 
 export default function ThemeSwitcher() {
+  const [theme, setTheme] = useState(savedTheme);
+
   useEffect(() => {
     savedTheme = getLocalStorageTheme();
+    setTheme(savedTheme);
     document.querySelector("html")!.dataset.theme = savedTheme;
   }, []);
-
-  const [theme, setTheme] = useState(savedTheme);
 
   function toggleTheme() {
     const newTheme = theme === "dark" ? "light" : "dark";
@@ -31,7 +32,7 @@ export default function ThemeSwitcher() {
         />
         <svg
           className={`${
-            savedTheme === "light" ? "swap-on" : "swap-off"
+            savedTheme === "dark" ? "swap-off" : "swap-on"
           } h-10 w-10 fill-current`}
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 24 24"
@@ -40,7 +41,7 @@ export default function ThemeSwitcher() {
         </svg>
         <svg
           className={`${
-            savedTheme === "light" ? "swap-off" : "swap-on"
+            savedTheme === "dark" ? "swap-on" : "swap-off"
           } h-10 w-10 fill-current`}
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 24 24"
