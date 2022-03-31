@@ -11,7 +11,7 @@ type CategoriesProps = {
 
 function Categories({ categories }: CategoriesProps) {
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center py-2">
+    <div className="min-h-screen py-2">
       <Head>
         <title>velty - market categories</title>
         <link rel="icon" href="/favicon.ico" />
@@ -19,11 +19,11 @@ function Categories({ categories }: CategoriesProps) {
 
       <Topbar />
 
-      <main className="flex w-full flex-1 flex-col items-center justify-center px-20 text-center">
-        <h1 className="text-6xl font-bold">market categories</h1>
+      <main className="mt-6 flex w-full flex-1 flex-col items-center justify-center px-20 text-center">
+        <h1 className="text-2xl font-bold md:text-6xl">market categories</h1>
       </main>
 
-      <div className="mt-6">
+      <div className="mt-6 flex w-full text-center">
         <CategoriesTable categories={categories} />
       </div>
     </div>

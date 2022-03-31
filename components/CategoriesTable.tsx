@@ -7,7 +7,7 @@ type CategoriesProps = {
 
 export default function CategoriesTable({ categories }: CategoriesProps) {
   return (
-    <div className="overflow-x-auto">
+    <div className="m-auto overflow-x-auto">
       <table className="table-compact table w-full">
         <thead>
           <tr>
