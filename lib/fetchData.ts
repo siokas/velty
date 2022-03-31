@@ -1,16 +1,51 @@
-import type { MarketcapDataResponse as Data } from "../types/stats";
+import type {
+  APICategoryResponse,
+  MarketcapDataResponse,
+} from "../types/stats";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 const API_VERSION = process.env.NEXT_PUBLIC_API_VERSION;
 const API_CRYPTO_INDEX_URL = process.env.NEXT_PUBLIC_API_CRYPTO_INDEX_URL;
+const API_COINGEKO_BASE_URL = "https://api.coingecko.com/api/v3";
 
-export async function fetchMarketCapData() {
+export async function fetchMarketCapData(): Promise<MarketcapDataResponse> {
   const API_URL: string = `${API_BASE_URL}/${API_VERSION}/${API_CRYPTO_INDEX_URL}`;
   const response: Response = await fetch(API_URL);
-  let dataToReturn: Data = { index: 0, marketcap: 0, btcDominance: 0 };
+  let dataToReturn: MarketcapDataResponse = {
+    index: 0,
+    marketcap: 0,
+    btcDominance: 0,
+  };
 
   if (response.ok) {
-    const data: Data = await response.json();
+    const data: MarketcapDataResponse = await response.json();
+    dataToReturn = data;
+  }
+
+  return dataToReturn;
+}
+
+export async function fetchMarketCategories(): Promise<
+  Array<APICategoryResponse>
+> {
+  const CATEGORIES_URL: String = "coins/categories";
+  const API_URL: string = `${API_COINGEKO_BASE_URL}/${CATEGORIES_URL}`;
+  const response: Response = await fetch(API_URL);
+  let dataToReturn: Array<APICategoryResponse> = [
+    {
+      id: "",
+      name: "",
+      market_cap: 0,
+      market_cap_change_24h: 0,
+      content: "",
+      top_3_coins: [""],
+      volume_24h: 0,
+      updated_at: "",
+    },
+  ];
+
+  if (response.ok) {
+    const data: Array<APICategoryResponse> = await response.json();
     dataToReturn = data;
   }
 

@@ -8,6 +8,7 @@ import { useState, useEffect } from "react";
 import { fetchMarketCapData } from "../lib/fetchData";
 import { NextPageContext } from "next";
 import type {
+  MarketcapDataResponse,
   MarketcapDataResponse as MCData,
   MCDataProps,
 } from "../types/stats";
@@ -53,9 +54,9 @@ function Home({ data }: MCDataProps) {
         </div>
       </main>
 
-      <div>
+      <div className="mt-6">
         <Modal
-          buttonName="How does this work?"
+          buttonName="What is this?"
           title="Velty Crypto Index"
           modalActionName="Got it!"
         >
@@ -76,17 +77,8 @@ function Home({ data }: MCDataProps) {
 }
 
 Home.getInitialProps = async (ctx: NextPageContext) => {
-  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
-  const API_VERSION = process.env.NEXT_PUBLIC_API_VERSION;
-  const API_CRYPTO_INDEX_URL = process.env.NEXT_PUBLIC_API_CRYPTO_INDEX_URL;
-  const API_URL: string = `${API_BASE_URL}/${API_VERSION}/${API_CRYPTO_INDEX_URL}`;
-  const response: Response = await fetch(API_URL);
-  let dataToReturn = { index: 0, marketcap: 0, btcDominance: 0 };
-  if (response.ok) {
-    const data: MCData = await response.json();
-    dataToReturn = data;
-  }
-  return { data: dataToReturn };
+  const data: MarketcapDataResponse = await fetchMarketCapData();
+  return { data };
 };
 
 export default Home;
