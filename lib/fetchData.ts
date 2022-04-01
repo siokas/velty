@@ -1,6 +1,7 @@
 import type {
   APICategoryResponse,
   MarketcapDataResponse,
+  APIGlobalDataResponse,
 } from "../types/stats";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
@@ -46,6 +47,33 @@ export async function fetchMarketCategories(): Promise<
 
   if (response.ok) {
     const data: Array<APICategoryResponse> = await response.json();
+    dataToReturn = data;
+  }
+
+  return dataToReturn;
+}
+
+export async function fetchGlobalData(): Promise<APIGlobalDataResponse> {
+  const GLOBAL_URL: String = "global";
+  const API_URL: string = `${API_COINGEKO_BASE_URL}/${GLOBAL_URL}`;
+  const response: Response = await fetch(API_URL);
+  let dataToReturn: APIGlobalDataResponse = {
+    data: {
+      active_cryptocurrencies: 0,
+      upcoming_icos: 0,
+      ongoing_icos: 0,
+      ended_icos: 0,
+      markets: 0,
+      total_market_cap: {},
+      total_volume: {},
+      market_cap_percentage: {},
+      market_cap_change_percentage_24h_usd: 0,
+      updated_at: 0,
+    },
+  };
+
+  if (response.ok) {
+    const data: APIGlobalDataResponse = await response.json();
     dataToReturn = data;
   }
 

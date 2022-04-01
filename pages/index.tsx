@@ -5,17 +5,19 @@ import MainStats from "../components/Stats/MainStats";
 import Topbar from "../components/Topbar";
 import Modal from "../components/Modal";
 import { useState, useEffect } from "react";
-import { fetchMarketCapData } from "../lib/fetchData";
+import { fetchMarketCapData, fetchGlobalData } from "../lib/fetchData";
 import { NextPageContext } from "next";
 import type {
   MarketcapDataResponse,
   MarketcapDataResponse as MCData,
   MCDataProps,
+  APIGlobalDataResponse,
 } from "../types/stats";
+import { percentageFormatter } from "../helpers";
 
 const FETCH_INTERVAL_IN_MINUTES = 5;
 const FETCH_INTERVAL_IN_SECONDS = FETCH_INTERVAL_IN_MINUTES * 60;
-function Home({ data }: MCDataProps) {
+function Home({ data, global }: MCDataProps) {
   const [cryptoData, setCryptoData] = useState(data);
 
   useEffect(() => {
@@ -45,10 +47,12 @@ function Home({ data }: MCDataProps) {
 
         <div className="mt-6 flex flex-wrap items-center sm:max-w-4xl">
           <MainStats
-            title="Top 100 Crypto Data"
+            title="crypto market data"
             cryptoIndex={cryptoData.index}
             cryptoMarketCap={cryptoData.marketcap}
             btcDominance={cryptoData.btcDominance}
+            marketCapChange={global.data.market_cap_change_percentage_24h_usd}
+            activeCrypto={global.data.active_cryptocurrencies}
             cvix={123}
           />
         </div>
@@ -56,17 +60,22 @@ function Home({ data }: MCDataProps) {
 
       <div className="mt-6">
         <Modal
-          buttonName="What is this?"
-          title="Velty Crypto Index"
+          buttonName="what is this?"
+          title="velty crypto index"
           modalActionName="Got it!"
         >
-          <p className="py-4">
+          <p className="py-4 lowercase">
             Velty has lots of dreams! At the moment it is sleeping... In the
-            near future it is going to get up and make its dreams come true! So
-            for now velty calculates a dead simple price index for the first 100
-            crypto projects, based on marketcap. It also gives you the crypto
-            market capitalization as well as the Bitcoin market dominance
-            percentage.
+            near future it is going to get up and make its dreams come true!{" "}
+            <br />
+            So for now velty calculates a dead simple{" "}
+            <strong>price index</strong> for the first 100 crypto projects,
+            based on marketcap. It also shows the
+            <strong>crypto market capitalization</strong> and the{" "}
+            <strong>capitalization change in 24</strong>
+            hours, the <strong>Bitcoin market dominance</strong> percentage and
+            the <strong>total active crypto</strong> that is currently on the
+            market.
           </p>
         </Modal>
       </div>
@@ -78,7 +87,12 @@ function Home({ data }: MCDataProps) {
 
 Home.getInitialProps = async (ctx: NextPageContext) => {
   const data: MarketcapDataResponse = await fetchMarketCapData();
-  return { data };
+  const global: APIGlobalDataResponse = await fetchGlobalData();
+  data.btcDominance = parseFloat(
+    percentageFormatter(global.data.market_cap_percentage["btc"], 2)
+  );
+
+  return { data, global };
 };
 
 export default Home;

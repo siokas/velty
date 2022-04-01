@@ -3,7 +3,7 @@ import { ModalProps } from "../types/app";
 export default function Modal(props: ModalProps) {
   return (
     <>
-      <label htmlFor="my-modal" className="modal-button btn">
+      <label htmlFor="my-modal" className="modal-button btn lowercase">
         {props.buttonName}
       </label>
 
@@ -13,7 +13,7 @@ export default function Modal(props: ModalProps) {
           <h3 className="text-lg font-bold">{props.title}</h3>
           {props.children}
           <div className="modal-action">
-            <label htmlFor="my-modal" className="btn">
+            <label htmlFor="my-modal" className="btn lowercase">
               {props.modalActionName}
             </label>
           </div>
