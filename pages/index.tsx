@@ -70,9 +70,9 @@ function Home({ data, global }: MCDataProps) {
             <br />
             So for now velty calculates a dead simple{" "}
             <strong>price index</strong> for the first 100 crypto projects,
-            based on marketcap. It also shows the
+            based on marketcap. It also shows the{" "}
             <strong>crypto market capitalization</strong> and the{" "}
-            <strong>capitalization change in 24</strong>
+            <strong>capitalization change in 24 </strong>
             hours, the <strong>Bitcoin market dominance</strong> percentage and
             the <strong>total active crypto</strong> that is currently on the
             market.
