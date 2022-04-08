@@ -13,6 +13,11 @@ export default function NavBar() {
           <a className="font-bold">Categories</a>
         </Link>
       </span>
+      <span className="ml-4">
+        <Link href="/annualData">
+          <a className="font-bold">Annual data</a>
+        </Link>
+      </span>
     </div>
   );
 }

@@ -21,5 +21,6 @@ export function numberFormatter(num: number, digits: number): string {
 }
 
 export function percentageFormatter(num: number, digits = 2): string {
+  if (!num) return "";
   return num.toLocaleString("en-US", { maximumFractionDigits: digits });
 }

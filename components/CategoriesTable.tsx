@@ -1,5 +1,5 @@
 import { numberFormatter, percentageFormatter } from "../helpers";
-import { APICategoryResponse } from "../types/stats";
+import { APICategoryResponse } from "../types/api";
 
 type CategoriesProps = {
   categories: Array<APICategoryResponse>;

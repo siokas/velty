@@ -2,22 +2,32 @@ import Head from "next/head";
 import Image from "next/image";
 import Footer from "../components/Footer";
 import MainStats from "../components/Stats/MainStats";
+import SingleStat from "../components/Stats/SignleStat";
 import Topbar from "../components/Topbar";
 import Modal from "../components/Modal";
 import { useState, useEffect } from "react";
-import { fetchMarketCapData, fetchGlobalData } from "../lib/fetchData";
+import {
+  fetchMarketCapData,
+  fetchGlobalData,
+  fetchAnnualData,
+} from "../lib/fetchData";
 import { NextPageContext } from "next";
+import type { MCDataProps } from "../types/app";
 import type {
   MarketcapDataResponse,
   MarketcapDataResponse as MCData,
-  MCDataProps,
   APIGlobalDataResponse,
-} from "../types/stats";
+} from "../types/api";
+import { AnnualData as AnnualDataProps } from "../types/app";
 import { percentageFormatter } from "../helpers";
+import Link from "next/link";
 
 const FETCH_INTERVAL_IN_MINUTES = 5;
 const FETCH_INTERVAL_IN_SECONDS = FETCH_INTERVAL_IN_MINUTES * 60;
-function Home({ data, global }: MCDataProps) {
+
+const randomNumber = Math.floor(Math.random() * (10 - 4) + 4);
+
+function Home({ data, global, annualData }: MCDataProps) {
   const [cryptoData, setCryptoData] = useState(data);
 
   useEffect(() => {
@@ -56,6 +66,24 @@ function Home({ data, global }: MCDataProps) {
             cvix={123}
           />
         </div>
+
+        <div className="mt-6">
+          <div className="my-6 text-xl font-semibold">
+            annual returns/risks ratio
+          </div>
+          <Link href="/annualData">
+            <a>
+              <SingleStat
+                value={annualData.ratio[randomNumber].toFixed(2)}
+                description="based on daily prices from 1st Jan 2020"
+                title={annualData.symbol[randomNumber].substring(
+                  0,
+                  annualData.symbol[randomNumber].length - 4
+                )}
+              />
+            </a>
+          </Link>
+        </div>
       </main>
 
       <div className="mt-6">
@@ -88,11 +116,12 @@ function Home({ data, global }: MCDataProps) {
 Home.getInitialProps = async (ctx: NextPageContext) => {
   const data: MarketcapDataResponse = await fetchMarketCapData();
   const global: APIGlobalDataResponse = await fetchGlobalData();
+  const annualData: AnnualDataProps = await fetchAnnualData();
   data.btcDominance = parseFloat(
     percentageFormatter(global.data.market_cap_percentage["btc"], 2)
   );
 
-  return { data, global };
+  return { data, global, annualData };
 };
 
 export default Home;

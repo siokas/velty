@@ -2,11 +2,14 @@ import type {
   APICategoryResponse,
   MarketcapDataResponse,
   APIGlobalDataResponse,
-} from "../types/stats";
+  AnnualDataResponse,
+} from "../types/api";
+import { AnnualData } from "../types/app";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 const API_VERSION = process.env.NEXT_PUBLIC_API_VERSION;
 const API_CRYPTO_INDEX_URL = process.env.NEXT_PUBLIC_API_CRYPTO_INDEX_URL;
+const API_ANNUAL_DATA_URL = process.env.NEXT_PUBLIC_ANNUAL_DATA_API_URL;
 const API_COINGEKO_BASE_URL = "https://api.coingecko.com/api/v3";
 
 export async function fetchMarketCapData(): Promise<MarketcapDataResponse> {
@@ -21,6 +24,28 @@ export async function fetchMarketCapData(): Promise<MarketcapDataResponse> {
   if (response.ok) {
     const data: MarketcapDataResponse = await response.json();
     dataToReturn = data;
+  }
+
+  return dataToReturn;
+}
+
+export async function fetchAnnualData(): Promise<AnnualData> {
+  const API_URL: string = `${API_BASE_URL}/${API_VERSION}/${API_ANNUAL_DATA_URL}`;
+  const response: Response = await fetch(API_URL);
+  let dataToReturn: AnnualDataResponse = {
+    annualReturns: "",
+    annualRisks: "",
+    ratio: "",
+    symbol: "",
+  };
+
+  if (response.ok) {
+    const data: AnnualDataResponse = await response.json();
+
+    dataToReturn.annualReturns = JSON.parse(data.annualReturns);
+    dataToReturn.annualRisks = JSON.parse(data.annualRisks);
+    dataToReturn.ratio = JSON.parse(data.ratio);
+    dataToReturn.symbol = JSON.parse(data.symbol);
   }
 
   return dataToReturn;

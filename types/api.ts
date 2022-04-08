@@ -1,19 +1,3 @@
-export type mainStatsProps = {
-  title: string;
-  cryptoIndex: number;
-  cryptoMarketCap: number;
-  btcDominance: number;
-  marketCapChange: number;
-  activeCrypto: number;
-  cvix: number;
-};
-
-export type MarketcapDataResponse = {
-  index: number;
-  marketcap: number;
-  btcDominance: number;
-};
-
 export type APICategoryResponse = {
   id: string;
   name: string;
@@ -40,7 +24,15 @@ export type APIGlobalDataResponse = {
   };
 };
 
-export type MCDataProps = {
-  data: MarketcapDataResponse;
-  global: APIGlobalDataResponse;
+export type MarketcapDataResponse = {
+  index: number;
+  marketcap: number;
+  btcDominance: number;
+};
+
+export type AnnualDataResponse = {
+  annualReturns: string;
+  annualRisks: string;
+  ratio: string;
+  symbol: string;
 };

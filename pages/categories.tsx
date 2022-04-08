@@ -3,7 +3,7 @@ import Head from "next/head";
 import CategoriesTable from "../components/CategoriesTable";
 import Topbar from "../components/Topbar";
 import { fetchMarketCategories } from "../lib/fetchData";
-import { APICategoryResponse } from "../types/stats";
+import { APICategoryResponse } from "../types/api";
 
 type CategoriesProps = {
   categories: Array<APICategoryResponse>;
