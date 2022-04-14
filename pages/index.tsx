@@ -13,8 +13,8 @@ import {
   getGlobalData,
   getAnnualData,
 } from "../graphql/api";
-
-const randomNumber = Math.floor(Math.random() * (10 - 4) + 4);
+import { useEffect, useState } from "react";
+let counter = 0;
 
 export async function getServerSideProps() {
   await queryClient.prefetchQuery("veltyIndex", () => getVeltyIndex());
@@ -29,6 +29,15 @@ export async function getServerSideProps() {
 }
 
 export default function Home() {
+  const [randomNumber, setRandomNumber] = useState(counter);
+
+  useEffect(() => {
+    setInterval(() => {
+      setRandomNumber(counter++);
+      if (counter >= 15) counter = 0;
+    }, 5000);
+  }, []);
+
   const { data: _veltyIndex } = useQuery("veltyIndex", () => getVeltyIndex());
   const { data: _globalData } = useQuery("globalData", () => getGlobalData());
   const { data: _annualData } = useQuery("annualData", () => getAnnualData());

@@ -13,7 +13,7 @@ const API_ANNUAL_DATA_URL = process.env.NEXT_PUBLIC_ANNUAL_DATA_API_URL;
 const API_COINGEKO_BASE_URL = "https://api.coingecko.com/api/v3";
 
 export async function fetchVeltyIndexData(): Promise<VeltyIndexDataResponse> {
-  const API_URL: string = `${API_BASE_URL}/${API_VERSION}/${API_CRYPTO_INDEX_URL}`;
+  const API_URL = `${API_BASE_URL}/${API_VERSION}/${API_CRYPTO_INDEX_URL}`;
   const response: Response = await fetch(API_URL);
   let dataToReturn: VeltyIndexDataResponse = {
     index: 0,
@@ -30,9 +30,9 @@ export async function fetchVeltyIndexData(): Promise<VeltyIndexDataResponse> {
 }
 
 export async function fetchAnnualData(): Promise<Array<AnnualDataObject>> {
-  const API_URL: string = `${API_BASE_URL}/${API_VERSION}/${API_ANNUAL_DATA_URL}`;
+  const API_URL = `${API_BASE_URL}/${API_VERSION}/${API_ANNUAL_DATA_URL}`;
   const response: Response = await fetch(API_URL);
-  let annualData: AnnualDataResponse = {
+  const annualData: AnnualDataResponse = {
     annualReturns: "",
     annualRisks: "",
     ratio: "",
@@ -48,7 +48,7 @@ export async function fetchAnnualData(): Promise<Array<AnnualDataObject>> {
     annualData.symbol = JSON.parse(data.symbol);
   }
 
-  let dataToReturn: Array<AnnualDataObject> = [];
+  const dataToReturn: Array<AnnualDataObject> = [];
 
   Object.keys(annualData.annualReturns).map((el: any) => {
     // Do not take first element which is Timestamp (TODO: in backend)
@@ -72,8 +72,8 @@ export async function fetchAnnualData(): Promise<Array<AnnualDataObject>> {
 export async function fetchMarketCategories(): Promise<
   Array<APICategoryResponse>
 > {
-  const CATEGORIES_URL: String = "coins/categories";
-  const API_URL: string = `${API_COINGEKO_BASE_URL}/${CATEGORIES_URL}`;
+  const CATEGORIES_URL = "coins/categories";
+  const API_URL = `${API_COINGEKO_BASE_URL}/${CATEGORIES_URL}`;
   const response: Response = await fetch(API_URL);
   let dataToReturn: Array<APICategoryResponse> = [
     {
@@ -97,8 +97,8 @@ export async function fetchMarketCategories(): Promise<
 }
 
 export async function fetchGlobalData(): Promise<any> {
-  const GLOBAL_URL: String = "global";
-  const API_URL: string = `${API_COINGEKO_BASE_URL}/${GLOBAL_URL}`;
+  const GLOBAL_URL = "global";
+  const API_URL = `${API_COINGEKO_BASE_URL}/${GLOBAL_URL}`;
   const response: Response = await fetch(API_URL);
   let globalData: APIGlobalDataResponse = {
     data: {
@@ -120,7 +120,7 @@ export async function fetchGlobalData(): Promise<any> {
     globalData = data;
   }
 
-  let data = {
+  const data = {
     active_cryptocurrencies: globalData.data.active_cryptocurrencies,
     upcoming_icos: globalData.data.upcoming_icos,
     ongoing_icos: globalData.data.ongoing_icos,
@@ -143,7 +143,7 @@ export async function fetchGlobalData(): Promise<any> {
     });
   });
 
-  Object.keys(globalData.data.total_volume).map((el: any) => {
+  Object.keys(globalData.data.total_volume).map((el: string) => {
     data.total_volume.push({
       // @ts-ignore: never
       key: el,
@@ -152,7 +152,7 @@ export async function fetchGlobalData(): Promise<any> {
     });
   });
 
-  Object.keys(globalData.data.market_cap_percentage).map((el: any) => {
+  Object.keys(globalData.data.market_cap_percentage).map((el: string) => {
     data.market_cap_percentage.push({
       // @ts-ignore: never
       key: el,

@@ -1,6 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { fetchGlobalData } from "../../lib/fetchData";
-import { APIGlobalDataResponse } from "../../types/api";
 
 export default async function handler(
   req: NextApiRequest,
