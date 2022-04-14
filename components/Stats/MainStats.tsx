@@ -52,7 +52,7 @@ export default function MainStats(props: mainStatsProps) {
             </svg>
           </div>
           <div className="stat-title">price index</div>
-          <div className="stat-value">{props.cryptoIndex}</div>
+          <div className="stat-value">{props?.cryptoIndex}</div>
           <div className="stat-desc">based on last 5min</div>
         </div>
 
@@ -76,9 +76,13 @@ export default function MainStats(props: mainStatsProps) {
           </div>
           <div className="stat-title">total marketcap</div>
           <div className="stat-value">
-            {numberFormatter(props.cryptoMarketCap, 3)}
+            {props.cryptoMarketCap
+              ? numberFormatter(props.cryptoMarketCap, 3)
+              : 0}
           </div>
-          <div className="stat-desc">$btc dominance: {props.btcDominance}%</div>
+          <div className="stat-desc">
+            $btc dominance: {props?.btcDominance}%
+          </div>
         </div>
 
         <div className="stat">

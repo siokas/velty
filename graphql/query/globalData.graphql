@@ -1,0 +1,6 @@
+query getGlobalData {
+  globalData {
+    active_cryptocurrencies
+    market_cap_change_percentage_24h_usd
+  }
+}

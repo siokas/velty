@@ -1,8 +1,8 @@
 import { numberFormatter, percentageFormatter } from "../helpers";
-import { APICategoryResponse } from "../types/api";
+import { Category } from "./../graphql/schema/categories/categories";
 
 type CategoriesProps = {
-  categories: Array<APICategoryResponse>;
+  categories: Array<Category> | undefined;
 };
 
 export default function CategoriesTable({ categories }: CategoriesProps) {
@@ -19,17 +19,34 @@ export default function CategoriesTable({ categories }: CategoriesProps) {
           </tr>
         </thead>
         <tbody>
-          {categories.map((category, index) => {
-            return (
-              <tr key={category.id}>
-                <th>{index + 1}</th>
-                <th>{category.name}</th>
-                <td>{numberFormatter(category.market_cap, 2)}</td>
-                <td>{percentageFormatter(category.market_cap_change_24h)}%</td>
-                <td>{numberFormatter(category.volume_24h, 2)}</td>
-              </tr>
-            );
-          })}
+          {categories ? (
+            categories.map((category, index) => {
+              return (
+                <tr key={category?.id}>
+                  <th>{index + 1}</th>
+                  <th>{category?.name}</th>
+                  <td>
+                    {category.market_cap
+                      ? numberFormatter(category.market_cap, 2)
+                      : 0}
+                  </td>
+                  <td>
+                    {category.market_cap_change_24h
+                      ? percentageFormatter(category.market_cap_change_24h)
+                      : 0}
+                    %
+                  </td>
+                  <td>
+                    {category.volume_24h
+                      ? numberFormatter(category.volume_24h, 2)
+                      : 0}
+                  </td>
+                </tr>
+              );
+            })
+          ) : (
+            <></>
+          )}
         </tbody>
         <tfoot>
           <tr>

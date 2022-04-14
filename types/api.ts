@@ -4,7 +4,7 @@ export type APICategoryResponse = {
   market_cap: number;
   market_cap_change_24h: number;
   content: string;
-  top_3_coins: Array<String>;
+  top_3_coins: Array<string>;
   volume_24h: number;
   updated_at: string;
 };
@@ -24,7 +24,7 @@ export type APIGlobalDataResponse = {
   };
 };
 
-export type MarketcapDataResponse = {
+export type VeltyIndexDataResponse = {
   index: number;
   marketcap: number;
   btcDominance: number;

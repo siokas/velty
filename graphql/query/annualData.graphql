@@ -1,0 +1,8 @@
+query getAnnualData {
+  annualData {
+    annualReturns
+    annualRisks
+    ratio
+    symbol
+  }
+}

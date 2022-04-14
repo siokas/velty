@@ -3,6 +3,8 @@ import { useRouter } from "next/router";
 import * as gtag from "../lib/gtag";
 import "../styles/globals.css";
 import type { AppProps } from "next/app";
+import { Hydrate, QueryClientProvider } from "react-query";
+import { queryClient } from "../graphql/api";
 
 export default function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
@@ -19,5 +21,11 @@ export default function MyApp({ Component, pageProps }: AppProps) {
     }
   }, [router.events]);
 
-  return <Component {...pageProps} />;
+  return (
+    <QueryClientProvider client={queryClient}>
+      <Hydrate state={pageProps.dehydratedState}>
+        <Component {...pageProps} />
+      </Hydrate>
+    </QueryClientProvider>
+  );
 }
