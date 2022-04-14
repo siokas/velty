@@ -49,10 +49,6 @@ export default function Home() {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center py-2">
       <Head>
-        <meta
-          http-equiv="Content-Security-Policy"
-          content="upgrade-insecure-requests"
-        />
         <title>velty - crypto data analysis</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
