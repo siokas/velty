@@ -1,10 +1,16 @@
 import { useEffect } from "react";
-import { useRouter } from "next/router";
+import Router, { useRouter } from "next/router";
 import * as gtag from "../lib/gtag";
 import "../styles/globals.css";
+import "nprogress/nprogress.css";
 import type { AppProps } from "next/app";
 import { Hydrate, QueryClientProvider } from "react-query";
 import { queryClient } from "../graphql/api";
+import NProgress from "nprogress";
+
+Router.events.on("routeChangeStart", () => NProgress.start());
+Router.events.on("routeChangeComplete", () => NProgress.done());
+Router.events.on("routeChangeError", () => NProgress.done());
 
 export default function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();

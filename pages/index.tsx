@@ -13,8 +13,8 @@ import {
   getGlobalData,
   getAnnualData,
 } from "../graphql/api";
-import { useEffect, useState } from "react";
-let counter = 0;
+import { useState } from "react";
+import { useInterval } from "../helpers";
 
 export async function getServerSideProps() {
   await queryClient.prefetchQuery("veltyIndex", () => getVeltyIndex());
@@ -29,14 +29,17 @@ export async function getServerSideProps() {
 }
 
 export default function Home() {
-  const [randomNumber, setRandomNumber] = useState(counter);
+  const [counter, setCounter] = useState(0);
+  const [progressBarTimer, setProgressBarTimer] = useState(0);
 
-  useEffect(() => {
-    setInterval(() => {
-      setRandomNumber(counter++);
-      if (counter >= 15) counter = 0;
-    }, 5000);
-  }, []);
+  useInterval(() => {
+    if (progressBarTimer >= 5) {
+      setCounter(counter + 1);
+      setProgressBarTimer(0);
+    } else setProgressBarTimer(progressBarTimer + 1);
+
+    if (counter >= 15) setCounter(0);
+  }, 1000);
 
   const { data: _veltyIndex } = useQuery("veltyIndex", () => getVeltyIndex());
   const { data: _globalData } = useQuery("globalData", () => getGlobalData());
@@ -73,22 +76,29 @@ export default function Home() {
           />
         </div>
 
-        <div className="mt-6">
+        <div className="mt-6 flex flex-col">
           <div className="my-6 text-xl font-semibold">
-            annual returns/risks ratio
+            annual returns / risks ratio
           </div>
           <Link href="/annualData">
             <a>
               <SingleStat
-                value={annualData[randomNumber].ratio.toFixed(2)}
+                value={annualData[counter].ratio.toFixed(2)}
                 description="based on daily prices from 1st Jan 2020"
-                title={annualData[randomNumber].symbol.substring(
+                title={annualData[counter].symbol.substring(
                   0,
-                  annualData[randomNumber].symbol.length - 4
+                  annualData[counter].symbol.length - 4
                 )}
               />
             </a>
           </Link>
+          <div>
+            <progress
+              className="progress progress-accent mt-4 w-56 text-center"
+              value={progressBarTimer * 20}
+              max="100"
+            ></progress>
+          </div>
         </div>
       </main>
 
