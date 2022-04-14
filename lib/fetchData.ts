@@ -1,10 +1,10 @@
 import type {
   APICategoryResponse,
-  MarketcapDataResponse,
+  VeltyIndexDataResponse,
   APIGlobalDataResponse,
   AnnualDataResponse,
 } from "../types/api";
-import { AnnualData } from "../types/app";
+import { AnnualDataObject } from "../types/app";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 const API_VERSION = process.env.NEXT_PUBLIC_API_VERSION;
@@ -12,27 +12,27 @@ const API_CRYPTO_INDEX_URL = process.env.NEXT_PUBLIC_API_CRYPTO_INDEX_URL;
 const API_ANNUAL_DATA_URL = process.env.NEXT_PUBLIC_ANNUAL_DATA_API_URL;
 const API_COINGEKO_BASE_URL = "https://api.coingecko.com/api/v3";
 
-export async function fetchMarketCapData(): Promise<MarketcapDataResponse> {
+export async function fetchVeltyIndexData(): Promise<VeltyIndexDataResponse> {
   const API_URL: string = `${API_BASE_URL}/${API_VERSION}/${API_CRYPTO_INDEX_URL}`;
   const response: Response = await fetch(API_URL);
-  let dataToReturn: MarketcapDataResponse = {
+  let dataToReturn: VeltyIndexDataResponse = {
     index: 0,
     marketcap: 0,
     btcDominance: 0,
   };
 
   if (response.ok) {
-    const data: MarketcapDataResponse = await response.json();
+    const data: VeltyIndexDataResponse = await response.json();
     dataToReturn = data;
   }
 
   return dataToReturn;
 }
 
-export async function fetchAnnualData(): Promise<AnnualData> {
+export async function fetchAnnualData(): Promise<Array<AnnualDataObject>> {
   const API_URL: string = `${API_BASE_URL}/${API_VERSION}/${API_ANNUAL_DATA_URL}`;
   const response: Response = await fetch(API_URL);
-  let dataToReturn: AnnualDataResponse = {
+  let annualData: AnnualDataResponse = {
     annualReturns: "",
     annualRisks: "",
     ratio: "",
@@ -42,11 +42,29 @@ export async function fetchAnnualData(): Promise<AnnualData> {
   if (response.ok) {
     const data: AnnualDataResponse = await response.json();
 
-    dataToReturn.annualReturns = JSON.parse(data.annualReturns);
-    dataToReturn.annualRisks = JSON.parse(data.annualRisks);
-    dataToReturn.ratio = JSON.parse(data.ratio);
-    dataToReturn.symbol = JSON.parse(data.symbol);
+    annualData.annualReturns = JSON.parse(data.annualReturns);
+    annualData.annualRisks = JSON.parse(data.annualRisks);
+    annualData.ratio = JSON.parse(data.ratio);
+    annualData.symbol = JSON.parse(data.symbol);
   }
+
+  let dataToReturn: Array<AnnualDataObject> = [];
+
+  Object.keys(annualData.annualReturns).map((el: any) => {
+    // Do not take first element which is Timestamp (TODO: in backend)
+    if (el > 0) {
+      dataToReturn.push({
+        // @ts-ignore: Object as any
+        annualReturns: annualData.annualReturns[el],
+        // @ts-ignore: Object as any
+        annualRisks: annualData.annualRisks[el],
+        // @ts-ignore: Object as any
+        ratio: annualData.ratio[el],
+        // @ts-ignore: Object as any
+        symbol: annualData.symbol[el],
+      });
+    }
+  });
 
   return dataToReturn;
 }
@@ -78,11 +96,11 @@ export async function fetchMarketCategories(): Promise<
   return dataToReturn;
 }
 
-export async function fetchGlobalData(): Promise<APIGlobalDataResponse> {
+export async function fetchGlobalData(): Promise<any> {
   const GLOBAL_URL: String = "global";
   const API_URL: string = `${API_COINGEKO_BASE_URL}/${GLOBAL_URL}`;
   const response: Response = await fetch(API_URL);
-  let dataToReturn: APIGlobalDataResponse = {
+  let globalData: APIGlobalDataResponse = {
     data: {
       active_cryptocurrencies: 0,
       upcoming_icos: 0,
@@ -99,8 +117,49 @@ export async function fetchGlobalData(): Promise<APIGlobalDataResponse> {
 
   if (response.ok) {
     const data: APIGlobalDataResponse = await response.json();
-    dataToReturn = data;
+    globalData = data;
   }
 
-  return dataToReturn;
+  let data = {
+    active_cryptocurrencies: globalData.data.active_cryptocurrencies,
+    upcoming_icos: globalData.data.upcoming_icos,
+    ongoing_icos: globalData.data.ongoing_icos,
+    ended_icos: globalData.data.ended_icos,
+    markets: globalData.data.markets,
+    total_market_cap: [],
+    total_volume: [],
+    market_cap_percentage: [],
+    market_cap_change_percentage_24h_usd:
+      globalData.data.market_cap_change_percentage_24h_usd,
+    updated_at: globalData.data.updated_at,
+  };
+
+  Object.keys(globalData.data.total_market_cap).map((el: string) => {
+    data.total_market_cap.push({
+      // @ts-ignore: never
+      key: el,
+      // @ts-ignore: never
+      value: globalData.data.total_market_cap[el],
+    });
+  });
+
+  Object.keys(globalData.data.total_volume).map((el: any) => {
+    data.total_volume.push({
+      // @ts-ignore: never
+      key: el,
+      // @ts-ignore: never
+      value: globalData.data.total_volume[el],
+    });
+  });
+
+  Object.keys(globalData.data.market_cap_percentage).map((el: any) => {
+    data.market_cap_percentage.push({
+      // @ts-ignore: never
+      key: el,
+      // @ts-ignore: never
+      value: globalData.data.market_cap_percentage[el],
+    });
+  });
+
+  return data;
 }

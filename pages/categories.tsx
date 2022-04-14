@@ -1,15 +1,23 @@
-import { NextPageContext } from "next";
 import Head from "next/head";
 import CategoriesTable from "../components/CategoriesTable";
 import Topbar from "../components/Topbar";
-import { fetchMarketCategories } from "../lib/fetchData";
-import { APICategoryResponse } from "../types/api";
+import { dehydrate, useQuery } from "react-query";
+import { queryClient, getCategories } from "../graphql/api";
 
-type CategoriesProps = {
-  categories: Array<APICategoryResponse>;
-};
+export async function getServerSideProps() {
+  await queryClient.prefetchQuery("categories", () => getCategories());
 
-function Categories({ categories }: CategoriesProps) {
+  return {
+    props: {
+      dehydratedState: dehydrate(queryClient),
+    },
+  };
+}
+
+function Categories() {
+  const { data: _categories } = useQuery("categories", () => getCategories());
+  const categories = _categories?.categories;
+
   return (
     <div className="min-h-screen py-2">
       <Head>
@@ -29,10 +37,4 @@ function Categories({ categories }: CategoriesProps) {
     </div>
   );
 }
-
-Categories.getInitialProps = async (ctx: NextPageContext) => {
-  const categories: Array<APICategoryResponse> = await fetchMarketCategories();
-  return { categories };
-};
-
 export default Categories;

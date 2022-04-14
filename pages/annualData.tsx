@@ -1,11 +1,23 @@
-import { NextPageContext } from "next";
 import Head from "next/head";
 import Topbar from "../components/Topbar";
-import { fetchAnnualData } from "../lib/fetchData";
-import { AnnualData as AnnualDataProps, AnnualDataObject } from "../types/app";
 import AnnualDataTable from "../components/AnnualDataTable";
+import { dehydrate, useQuery } from "react-query";
+import { queryClient, getAnnualData } from "../graphql/api";
 
-function AnnualData({ annualData }: { annualData: Array<AnnualDataObject> }) {
+export async function getServerSideProps() {
+  await queryClient.prefetchQuery("annualData", () => getAnnualData());
+
+  return {
+    props: {
+      dehydratedState: dehydrate(queryClient),
+    },
+  };
+}
+
+function AnnualData() {
+  const { data: _annualData } = useQuery("annualData", () => getAnnualData());
+  const annualData = _annualData?.annualData;
+
   return (
     <div className="min-h-screen py-2">
       <Head>
@@ -25,27 +37,5 @@ function AnnualData({ annualData }: { annualData: Array<AnnualDataObject> }) {
     </div>
   );
 }
-
-AnnualData.getInitialProps = async (ctx: NextPageContext) => {
-  const data: AnnualDataProps = await fetchAnnualData();
-  let annualData: Array<AnnualDataObject> = [];
-
-  Object.keys(data.annualReturns).map((el: any) => {
-    // Do not take first element which is Timestamp (TODO: in backend)
-    if (el > 0) {
-      annualData.push({
-        // @ts-ignore: Object as any
-        annualReturns: data.annualReturns[el],
-        // @ts-ignore: Object as any
-        annualRisks: data.annualRisks[el],
-        // @ts-ignore: Object as any
-        ratio: data.ratio[el],
-        // @ts-ignore: Object as any
-        symbol: data.symbol[el],
-      });
-    }
-  });
-  return { annualData };
-};
 
 export default AnnualData;

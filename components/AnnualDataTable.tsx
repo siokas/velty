@@ -1,10 +1,10 @@
 import { AnnualDataObject } from "../types/app";
 
-export default function AnnualDataTable({
-  annualData,
-}: {
-  annualData: Array<AnnualDataObject>;
-}) {
+type AnnualDataProps = {
+  annualData: Array<AnnualDataObject> | undefined;
+};
+
+export default function AnnualDataTable({ annualData }: AnnualDataProps) {
   return (
     <div className="m-auto overflow-x-auto lowercase">
       <table className="table-compact table w-full">
@@ -18,19 +18,23 @@ export default function AnnualDataTable({
           </tr>
         </thead>
         <tbody>
-          {annualData.map((data: AnnualDataObject, index: number) => {
-            return (
-              <tr key={index}>
-                <th>{index + 1}</th>
-                <th className="text-center font-bold text-accent">
-                  {data.symbol.substring(0, data.symbol.length - 4)}
-                </th>
-                <th>{data.annualReturns}</th>
-                <th>{data.annualRisks}</th>
-                <th>{data.ratio}</th>
-              </tr>
-            );
-          })}
+          {annualData ? (
+            annualData.map((data: AnnualDataObject, index: number) => {
+              return (
+                <tr key={index}>
+                  <th>{index + 1}</th>
+                  <th className="text-center font-bold text-accent">
+                    {data.symbol.substring(0, data.symbol.length - 4)}
+                  </th>
+                  <th>{data.annualReturns}</th>
+                  <th>{data.annualRisks}</th>
+                  <th>{data.ratio}</th>
+                </tr>
+              );
+            })
+          ) : (
+            <></>
+          )}
         </tbody>
         <tfoot>
           <tr>

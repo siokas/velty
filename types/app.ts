@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { MarketcapDataResponse, APIGlobalDataResponse } from "./api";
+import { VeltyIndexDataResponse, APIGlobalDataResponse } from "./api";
 
 export type ModalProps = {
   buttonName: string;
@@ -9,7 +9,7 @@ export type ModalProps = {
 };
 
 export type MCDataProps = {
-  data: MarketcapDataResponse;
+  data: VeltyIndexDataResponse;
   global: APIGlobalDataResponse;
   annualData: any;
 };

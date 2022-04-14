@@ -1,0 +1,7 @@
+query getVeltyIndex {
+  veltyIndex {
+    btcDominance
+    index
+    marketcap
+  }
+}

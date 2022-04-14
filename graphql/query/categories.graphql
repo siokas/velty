@@ -1,0 +1,9 @@
+query getCategories {
+  categories {
+    id
+    name
+    market_cap
+    market_cap_change_24h
+    volume_24h
+  }
+}

@@ -2,39 +2,40 @@ import Head from "next/head";
 import Image from "next/image";
 import Footer from "../components/Footer";
 import MainStats from "../components/Stats/MainStats";
-import SingleStat from "../components/Stats/SignleStat";
+import SingleStat from "../components/Stats/SingleStat";
 import Topbar from "../components/Topbar";
 import Modal from "../components/Modal";
-import { useState, useEffect } from "react";
-import {
-  fetchMarketCapData,
-  fetchGlobalData,
-  fetchAnnualData,
-} from "../lib/fetchData";
-import { NextPageContext } from "next";
-import type { MCDataProps } from "../types/app";
-import type {
-  MarketcapDataResponse,
-  MarketcapDataResponse as MCData,
-  APIGlobalDataResponse,
-} from "../types/api";
-import { AnnualData as AnnualDataProps } from "../types/app";
-import { percentageFormatter } from "../helpers";
 import Link from "next/link";
-
-const FETCH_INTERVAL_IN_MINUTES = 5;
-const FETCH_INTERVAL_IN_SECONDS = FETCH_INTERVAL_IN_MINUTES * 60;
+import { dehydrate, useQuery } from "react-query";
+import {
+  queryClient,
+  getVeltyIndex,
+  getGlobalData,
+  getAnnualData,
+} from "../graphql/api";
 
 const randomNumber = Math.floor(Math.random() * (10 - 4) + 4);
 
-function Home({ data, global, annualData }: MCDataProps) {
-  const [cryptoData, setCryptoData] = useState(data);
+export async function getServerSideProps() {
+  await queryClient.prefetchQuery("veltyIndex", () => getVeltyIndex());
+  await queryClient.prefetchQuery("globalData", () => getGlobalData());
+  await queryClient.prefetchQuery("annualData", () => getAnnualData());
 
-  useEffect(() => {
-    setInterval(() => {
-      fetchMarketCapData().then((response) => setCryptoData(response));
-    }, 1000 * FETCH_INTERVAL_IN_SECONDS);
-  }, []);
+  return {
+    props: {
+      dehydratedState: dehydrate(queryClient),
+    },
+  };
+}
+
+export default function Home() {
+  const { data: _veltyIndex } = useQuery("veltyIndex", () => getVeltyIndex());
+  const { data: _globalData } = useQuery("globalData", () => getGlobalData());
+  const { data: _annualData } = useQuery("annualData", () => getAnnualData());
+
+  const veltyIndex = _veltyIndex!.veltyIndex;
+  const globalData = _globalData!.globalData;
+  const annualData = _annualData!.annualData;
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center py-2">
@@ -58,11 +59,11 @@ function Home({ data, global, annualData }: MCDataProps) {
         <div className="mt-6 flex flex-wrap items-center sm:max-w-4xl">
           <MainStats
             title="crypto market data"
-            cryptoIndex={cryptoData.index}
-            cryptoMarketCap={cryptoData.marketcap}
-            btcDominance={cryptoData.btcDominance}
-            marketCapChange={global.data.market_cap_change_percentage_24h_usd}
-            activeCrypto={global.data.active_cryptocurrencies}
+            cryptoIndex={veltyIndex!.index}
+            cryptoMarketCap={veltyIndex!.marketcap}
+            btcDominance={veltyIndex!.btcDominance}
+            marketCapChange={globalData!.market_cap_change_percentage_24h_usd}
+            activeCrypto={globalData!.active_cryptocurrencies}
             cvix={123}
           />
         </div>
@@ -74,11 +75,11 @@ function Home({ data, global, annualData }: MCDataProps) {
           <Link href="/annualData">
             <a>
               <SingleStat
-                value={annualData.ratio[randomNumber].toFixed(2)}
+                value={annualData[randomNumber].ratio.toFixed(2)}
                 description="based on daily prices from 1st Jan 2020"
-                title={annualData.symbol[randomNumber].substring(
+                title={annualData[randomNumber].symbol.substring(
                   0,
-                  annualData.symbol[randomNumber].length - 4
+                  annualData[randomNumber].symbol.length - 4
                 )}
               />
             </a>
@@ -112,16 +113,3 @@ function Home({ data, global, annualData }: MCDataProps) {
     </div>
   );
 }
-
-Home.getInitialProps = async (ctx: NextPageContext) => {
-  const data: MarketcapDataResponse = await fetchMarketCapData();
-  const global: APIGlobalDataResponse = await fetchGlobalData();
-  const annualData: AnnualDataProps = await fetchAnnualData();
-  data.btcDominance = parseFloat(
-    percentageFormatter(global.data.market_cap_percentage["btc"], 2)
-  );
-
-  return { data, global, annualData };
-};
-
-export default Home;
